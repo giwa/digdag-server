@@ -3,15 +3,24 @@ FROM openjdk:8-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 RUN apt-get update && apt-get install -y \
-  curl gettext-base postgresql-client \
-  && rm -rf /var/lib/apt/lists/*
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg2 \
+    gettext-base postgresql-client \
+    software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
 
 # Installin docker client
-ENV DOCKER_CLIENT_VERSION=1.12.6 \
-    DOCKER_API_VERSION=1.24
-RUN curl -fsSL https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_CLIENT_VERSION}.tgz \
-  | tar -xzC /usr/local/bin --strip=1 docker/docker
-
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
+   add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) \
+   stable" && \
+   apt-get update && \
+   apt-get install docker-ce docker-ce-cli containerd.io -y && \
+   rm -rf /var/lib/apt/lists/*
+   
 # Installing digdag server
 RUN curl -o /usr/local/bin/digdag --create-dirs -L "https://dl.digdag.io/digdag-latest" && \
   chmod +x /usr/local/bin/digdag
