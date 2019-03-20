@@ -1,7 +1,7 @@
 version: '2'
 services:
   digdag:
-    image: kanga333/digdag-server
+    image: giwa/digdag-server
     ports:
       - "65432:65432"
       - "65433:65433"
